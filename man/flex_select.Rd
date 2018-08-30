@@ -2,12 +2,55 @@
 % Please edit documentation in R/flex_select.R
 \name{flex_select}
 \alias{flex_select}
-\title{Flex Select}
+\title{Select best fitting distribution}
 \usage{
 flex_select(formula, data = NULL, IC = "AIC",
   distributions = c("exp", "lnorm", "gamma", "weibull", "lomax", "fisk",
   "ggamma", "betapr", "sinmad", "dagum", "gb2"))
 }
+\arguments{
+\item{formula}{An object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted.}
+
+\item{data}{An optional data frame, list or environment (or object coercible by as.data.frame to a data frame) containing the variables in the model. If not found in data, the variables are taken from environment(formula), typically the environment from which flex_select is called.}
+
+\item{IC}{String variable indicating which information criteria should be used to rank the proposed distributions. Currently, the following are supported: “AIC”, “adjBIC”, “BIC”, “CAIC”, “AIC3”, and “AICc”.}
+
+\item{distribution}{A vector of string variables indicating which distributions should be ranked. Currently, the following are supported: "exp", "lnorm", "gamma", "weibull", "lomax", "fisk", "ggamma", "betapr", "sinmad", "dagum", and "gb2". By default, all distributions are ranked.}
+}
 \description{
-To be written :(
+flex_select is used to rank the overall distributional fit of a set of candidate distributions to a dataset. By default 11 distributions nested by  the Generalized Beta distribution of the Second Kind are considered. The ranking is based on an IC selected by the user.
+}
+\details{
+Since all distributions estimated are special cases of the Generalized Beta distribution of the Second Kind (GB2), comparing the information criteron of a distribution with a second distribution is equivalent to performing a likelihood ratio test as long as the second is a special case of the first. Non-nested distributions can also be compared in the same fashion by first comparing both to a distribution which nests them; usually the GB2.
+
+It is important to understand that different ICs imply different α levels in the likelihood ratio test; different ICs therefore imply different preferences for over distributions with high and low numbers of parameters.
+
+The AIC criteration is good for choosing models with predictive power. However, the criterion is not consistent and is biased towards overparameterized models. The criteration takes the form:
+
+AIC = -2l(θ) + 2k
+
+The adjusted BIC (adjBIC) criteration may penalize highly parametric models more than more than the BIC or less than the AIC, depending on the sample size; the likely model selection mistake therefore depends on the sample size. The criteration takes the form:
+
+adjBIC = -2l(θ) +log([n+2]/24)k
+
+The BIC criteration favors the selection of a parsimonious model. Although BIC is consistent, it often selects underrepresented models. The criteration takes the form:
+
+BIC = -2l(θ) +log(n)k
+
+The corrected AIC (CAIC) criteration likewise favors the selection of a parsimonious model and is most likely to select an underparameterized model. The CAIC is in fact more likely to select less parameterized models than the BIC. Dziak et al. (2017) note that additional parameter in the CAIC was selected somewhat arbitrarily, and the criterion therefore has no clear advantage over the BIC. The criteration takes the form:
+
+CAIC = -2l(θ) + [log(n)+1]k
+
+The AICc criteration was originally developed for rime series data, and applies a slightly heavier penalty to model complexity than the AIC. Model selection results will be similar to those under the AIC, as long as the sample size is not too large relative to the number of parameters. The criteration takes the form:
+
+CAIC = AIC + (m+1)(m+2)/(n-m-2)
+
+(m is the number of included regression coefficients, including an intercept)
+
+The AIC3 criteration applies a heavier penalty to additional parameters than the AIC. Dziak et al. (2017) note that despite good performance in simulations, there is the AIC3 has little theoretical basis. The criteration takes the form:
+
+AIC3 = -2l(θ) + 3k
+}
+\references{
+Dziak, John et al. "Sensitivity And Specificity Of Information Criteria." Technical Report Series #12-119 (2017)
 }
