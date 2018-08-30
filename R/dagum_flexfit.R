@@ -9,6 +9,15 @@
 #'@param key A logical parameter dictating whether a key is produced alongside the model’s output.
 #'@param warnings A logical parameter dictating whether warnings from the maximum likelihood estimation procedure are produced alongside the model’s output.
 #'@param ... Additional arguments to be passed to the function optim within the maximum likelihood estimation procedure. Useful arguments include the gradient descent algorithm to be used and bounds on parameter values; see the stats package.
+#'@details This function uses the same parametrization of the Dagum distribution as is used in Kleiber and Kotz (2003). Starting values for the maximum likelihood estimation procedure are obtained by maximizing the likelihood function of the the Generalized Beta distribution of the Second kind (GB2) subject to the constraint q = 1. Withing the GB2’s likelihood estimation, starting values for parameters other than p are taken from the method of moments estimates of the parameters of the Fisk distribution. The probability probability density function is used is:
+#'@details f(y) = apy^{ap-1}/[b^{ap}(1+(y/b)^{a})^{p+1}]
+#'@details b is a scale parameter, while a and p are shape parameters. 
+#'@details When the argument formula specifies a full model with an intercept, b takes the following form and is estimated via a three step (maximum likelihood, least squares, maximum likelihood) procedure:
+#'@details b = β0 + β1x1 + …. + βkxk
+#'@details When the formula argument specifies a model without an intercept, b takes the bellow form. Estimating a model without an intercept is not advised as the estimates are extremely unstable; in simulations and test with medical data, the maximum likelihood procedure often often did not converge. Users wanting to estimate a model without an intercept are advised to supply their own starting values.
+#'@details b = β1x1 + …. + βkxk
+#'@details When a null model is specified (formula = y ~ 0) b is not estimated as a function of covariates. The starting value for the maximum likelihood estimation procedure is obtained by calling the function weibull_scale.
+#'@references Kleiber, Christian, and Samuel Kotz. Statistical Size Distributions In Economics And Actuarial Sciences. John Wiley & Sons, 2003. Print.
 #'@export
 
 
