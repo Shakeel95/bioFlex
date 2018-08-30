@@ -1,9 +1,11 @@
 #'General Purpose Information Criterion Function
 #'
-#'General purpose function for computing one of six preset information criteria.
-#'@param data
-#'@param model A fitted model object for which there exists a logLik method to extract the corresponding log-likelihood, or an object inheriting from class logLik.
-#'@param IC ...
+#'General purpose function for computing one of six preset information criteria. This function is called by flex_select , and is used to rank distributions in order of best overall fit. 
+#'@param data An mandatory data frame or maxtrix containing the variables in the model.
+#'@param model An object of class "mle2".
+#'@param IC String variable indicating which information criteria should be outputted. Currently, the following are supported: “AIC”, “adjBIC”, “BIC”, “CAIC”, “AIC3”, and “AICc”.
+#'@references Dziak, John et al. "Sensitivity And Specificity Of Information Criteria." Technical Report Series #12-119 (2017)
+#'@export
 
 which_IC <- function(data, model, IC) {
 
