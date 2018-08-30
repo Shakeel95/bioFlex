@@ -1,12 +1,13 @@
 Package: bioFlex
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Estimation and model selection for strictly positive heavy tailed data, using flexible parametric models
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Shakeel Gavioli-Akilagun
+Maintainer: Shakeel Gavioli-Akilagun <shakeel.gavioli@googlemail.com>
+Description: Maximum likelihood estimation of flexible parametric distributions nested by the Generalized Beta distribution of the Second Kind, model selection via various information criterations; 
+              procedures for estimating the conditional mean E(Y|X) and conditional probability P(Y>k |X) of a response variable; 
+              Cholesky decomposition to correlate estimated parameters.
+License: GNU GENERAL PUBLIC LICENSE (Version 3)
 Depends:bbmle, extraDistr, broom, VGAM, actuar, DescTools
 Encoding: UTF-8
 LazyData: true
