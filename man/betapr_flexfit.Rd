@@ -28,7 +28,22 @@ betapr_flexfit(formula, data = NULL, weights = NULL, subset = NULL,
 betapr_flexfit is used to fit a Beta Prime distribution to a strictly positive response variable. The shape parameter may be specified either as a function of covariates or as a constant estimated using the response variable alone.
 }
 \details{
-smelly cats smell bad
+This function uses the two parameter parametrization of the Beta Prime distribution is used in Johnson and Kotz (1995). The tow parameter distribution ins a special case of the three parameter distribution, with σ = 1.  Starting values for the maximum likelihood estimation procedure are obtained by solving for the roots of a quadratic obtained by finding the ratio of the first and second moment. The probability probability density function is used is:
 
-so do others
+f(y) = [y^{α-1} (1+y)^{-(α+β)}]/Β(α,β)
+
+α is the first shape parameter and β is the second shape parameter.
+
+When the argument formula specifies a full model with an intercept, α takes the following form and is estimated via a two step (least squares and maximum likelihood) procedure:
+
+α = β0 + β1x1 + …. + βkxk
+
+When the formula argument specifies a model without an intercept, α takes the bellow form and is estimated via a two step (least squares and maximum likelihood) procedure. Unless theory suggests that an intercept should not be used, users are advised to use a model with an intercept as the maximum likelihood estimation procedure is more stable.
+
+α = β1x1 + …. + βkxk
+
+When a null model is specified (formula = y ~ 0) α is not estimated as a function of covariates. The starting value for the maximum likelihood estimation procedure is obtained by calling the function betapr_shape1.
+}
+\references{
+Johnson, N.L., Kotz, S., Balakrishnan, N. (1995). Continuous Univariate Distributions, Volume 2 (2nd Edition), Wiley.
 }

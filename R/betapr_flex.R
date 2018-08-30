@@ -9,8 +9,15 @@
 #'@param key A logical parameter dictating whether a key is produced alongside the model’s output.
 #'@param warnings A logical parameter dictating whether warnings from the maximum likelihood estimation procedure are produced alongside the model’s output.
 #'@param ... Additional arguments to be passed to the function optim within the maximum likelihood estimation procedure. Useful arguments include the gradient descent algorithm to be used and bounds on parameter values; see the stats package.
-#'@details smelly cats smell bad 
-#'@details so do others 
+#'@details This function uses the two parameter parametrization of the Beta Prime distribution is used in Johnson and Kotz (1995). The tow parameter distribution ins a special case of the three parameter distribution, with σ = 1.  Starting values for the maximum likelihood estimation procedure are obtained by solving for the roots of a quadratic obtained by finding the ratio of the first and second moment. The probability probability density function is used is:
+#'@details f(y) = [y^{α-1} (1+y)^{-(α+β)}]/Β(α,β)
+#'@details α is the first shape parameter and β is the second shape parameter. 
+#'@details When the argument formula specifies a full model with an intercept, α takes the following form and is estimated via a two step (least squares and maximum likelihood) procedure:
+#'@details α = β0 + β1x1 + …. + βkxk
+#'@details When the formula argument specifies a model without an intercept, α takes the bellow form and is estimated via a two step (least squares and maximum likelihood) procedure. Unless theory suggests that an intercept should not be used, users are advised to use a model with an intercept as the maximum likelihood estimation procedure is more stable.
+#'@details α = β1x1 + …. + βkxk
+#'@details When a null model is specified (formula = y ~ 0) α is not estimated as a function of covariates. The starting value for the maximum likelihood estimation procedure is obtained by calling the function betapr_shape1.
+#'@references Johnson, N.L., Kotz, S., Balakrishnan, N. (1995). Continuous Univariate Distributions, Volume 2 (2nd Edition), Wiley.
 #'@export
 
 betapr_flexfit <- function(formula, data = NULL, weights = NULL, subset = NULL, ownstart = NULL, key = TRUE, warnings = FALSE, ...) {
