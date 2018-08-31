@@ -1,6 +1,7 @@
 #' Fitting Exponential distribution via maximum likelihood
 #'
 #'exp_flexfit is used to fit an exponential distribution to a strictly positive response variable. The rate parameter may be specified either as a function of covariates or as a constant estimated using the response variable alone.
+#'If the rate parameter is specified to be a function of covariates, the canonical log link function is used.  
 #'@param formula An object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted.
 #'@param data An optional data frame, list or environment (or object coercible by as.data.frame to a data frame) containing the variables in the model. If not found in data, the variables are taken from environment(formula), typically the environment from which exp_flexfit is called.
 #'@param weights An optional vector of weights to be used in the fitting process. Should be NULL or a numeric vector.
@@ -12,9 +13,9 @@
 #'@details This function uses the most common parametrization of the Exponential distribution. The starting value for the maximum likelihood estimation procedure is given by the canonical estimator for the rate parameter in an Exponentially distributed random variable: the inverse of the sample mean. The probability probability density function is used is: 
 #'@details f(y) = λexp(-λy)
 #'@details When the argument formula specifies a full model with an intercept, the rate parameter takes the following form and is estimated via a two step (least squares and maximum likelihood) procedure:
-#'@details λ = β0 + β1x1 + …. + βkxk
+#'@details λ = exp(β0 + β1x1 + …. + βkxk)
 #'@details When the formula argument specifies a model without an intercept, the rate parameter takes the bellow form and is estimated via a two step (least squares and maximum likelihood) procedure. Unless theory suggests that an intercept should not be used, users are advised to use a model with an intercept as the maximum likelihood estimation procedure is more stable. 
-#'@details λ = β1x1 + …. + βkxk
+#'@details λ = exp(β1x1 + …. + βkxk)
 #'@details When a null model is specified (formula = y ~ 0) the rate parameter is not estimated as a function of covariates. The starting value for the maximum likelihood estimation procedure is obtained by calling the function exp_rate. 
 #'@references 
 #'@export 

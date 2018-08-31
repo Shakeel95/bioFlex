@@ -1,6 +1,7 @@
 #' Fitting Gamma distribution via maximum likelihood
 #'
 #'gamma_flexfit is used to fit a Gamma distribution to a strictly positive response variable. The shape parameter may be specified either as a function of covariates or as a constant estimated using the response variable alone.
+#'If the shape parameter is specified to be a function of covariates, the canonical log link function is used.
 #'@param formula An object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted.
 #'@param data An optional data frame, list or environment (or object coercible by as.data.frame to a data frame) containing the variables in the model. If not found in data, the variables are taken from environment(formula), typically the environment from which gamma_flexfit is called.
 #'@param weights An optional vector of weights to be used in the fitting process. Should be NULL or a numeric vector.
@@ -13,9 +14,9 @@
 #'@details f(y) = λ^{α}/Γ(α)•y^{α-1} exp(-λy)
 #'@details λ  is the rate parameter and α is the shape parameter. 
 #'@details When the argument formula specifies a full model with an intercept, α takes the following form and is estimated via a two step (least squares and maximum likelihood) procedure:
-#'@details α = β0 + β1x1 + …. + βkxk
+#'@details α = exp(β0 + β1x1 + …. + βkxk)
 #'@details When the formula argument specifies a model without an intercept, α takes the bellow form and is estimated via a two step (least squares and maximum likelihood) procedure. Unless theory suggests that an intercept should not be used, users are advised to use a model with an intercept as the maximum likelihood estimation procedure is more stable.
-#'@details α = β1x1 + …. + βkxk
+#'@details α = exp(β1x1 + …. + βkxk)
 #'@details When a null model is specified (formula = y ~ 0) α is not estimated as a function of covariates. The starting value for the maximum likelihood estimation procedure is obtained by calling the function gamma_shape.
 #'@references Kempthorne. "Parameter Estimation Fitting Probability Distributions Method Of Moments." MIT 18.443 (2015)
 #'@export

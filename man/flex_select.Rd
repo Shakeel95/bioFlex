@@ -27,29 +27,29 @@ It is important to understand that different ICs imply different α levels in th
 
 The AIC criteration is good for choosing models with predictive power. However, the criterion is not consistent and is biased towards overparameterized models. The criteration takes the form:
 
-AIC = -2l(θ) + 2k
+AIC = -2l(θ) + 2p
 
 The adjusted BIC (adjBIC) criteration may penalize highly parametric models more than more than the BIC or less than the AIC, depending on the sample size; the likely model selection mistake therefore depends on the sample size. The criteration takes the form:
 
-adjBIC = -2l(θ) +log([n+2]/24)k
+adjBIC = -2l(θ) +log([n+2]/24)p
 
 The BIC criteration favors the selection of a parsimonious model. Although BIC is consistent, it often selects underrepresented models. The criteration takes the form:
 
-BIC = -2l(θ) +log(n)k
+BIC = -2l(θ) +log(n)p
 
 The corrected AIC (CAIC) criteration likewise favors the selection of a parsimonious model and is most likely to select an underparameterized model. The CAIC is in fact more likely to select less parameterized models than the BIC. Dziak et al. (2017) note that additional parameter in the CAIC was selected somewhat arbitrarily, and the criterion therefore has no clear advantage over the BIC. The criteration takes the form:
 
-CAIC = -2l(θ) + [log(n)+1]k
+CAIC = -2l(θ) + [log(n)+1]p
 
 The AICc criteration was originally developed for rime series data, and applies a slightly heavier penalty to model complexity than the AIC. Model selection results will be similar to those under the AIC, as long as the sample size is not too large relative to the number of parameters. The criteration takes the form:
 
-CAIC = AIC + (m+1)(m+2)/(n-m-2)
+CAIC = AIC + (k+1)(k+2)/(n-k-2)
 
-(m is the number of included regression coefficients, including an intercept)
+(k is the number of included regression coefficients, including an intercept)
 
 The AIC3 criteration applies a heavier penalty to additional parameters than the AIC. Dziak et al. (2017) note that despite good performance in simulations, there is the AIC3 has little theoretical basis. The criteration takes the form:
 
-AIC3 = -2l(θ) + 3k
+AIC3 = -2l(θ) + 3p
 }
 \references{
 Dziak, John et al. "Sensitivity And Specificity Of Information Criteria." Technical Report Series #12-119 (2017)

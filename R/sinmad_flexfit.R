@@ -1,6 +1,7 @@
 #' Fitting Singh-Maddala distribution via maximum likelihood
 #'
 #'sinmad_flexfit is used to fit a Singh-Maddala distribution to a strictly positive response variable. The scale parameter may be specified either as a function of covariates or as a constant estimated using the response variable alone.
+#'If the scale parameter is specified to be a function of covariates, the canonical log link function is used.
 #'@param formula An object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted.
 #'@param data An optional data frame, list or environment (or object coercible by as.data.frame to a data frame) containing the variables in the model. If not found in data, the variables are taken from environment(formula), typically the environment from which sinmad_flexfit is called.
 #'@param weights An optional vector of weights to be used in the fitting process. Should be NULL or a numeric vector.
@@ -13,9 +14,9 @@
 #'@details f(y) = aqy^{a-1}/[b^{a}(1+(y/b)^{a})^{1+q}]
 #'@details b is a scale parameter, while a and q are shape parameters; q only affects the right tail, whereas a affects both tails. 
 #'@details When the argument formula specifies a full model with an intercept, b takes the following form and is estimated via a three step (maximum likelihood, least squares, maximum likelihood) procedure:
-#'@details b = β0 + β1x1 + …. + βkxk
+#'@details b = exp(β0 + β1x1 + …. + βkxk)
 #'@details When the formula argument specifies a model without an intercept, b takes the bellow form. Estimating a model without an intercept is not advised as the estimates are extremely unstable; in simulations and test with medical data, the maximum likelihood procedure often often did not converge. Users wanting to estimate a model without an intercept are advised to supply their own starting values. 
-#'@details b = β1x1 + …. + βkxk
+#'@details b = exp(β1x1 + …. + βkxk)
 #'@details When a null model is specified (formula = y ~ 0) b is not estimated as a function of covariates. The starting value for the maximum likelihood estimation procedure is obtained by calling the function weibull_scale.
 #'@references Kleiber, Christian, and Samuel Kotz. Statistical Size Distributions In Economics And Actuarial Sciences. John Wiley & Sons, 2003. Print.
 #'@export

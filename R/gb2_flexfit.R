@@ -1,6 +1,7 @@
 #' Fitting Generalized Beta of the Second Kind via maximum likelihood
 #'
 #'gb2_flexfit is used to fit a Generalized Beta distribution of the Second Kind distribution to a strictly positive response variable. The scale parameter may be specified either as a function of covariates or as a constant estimated using the response variable alone.
+#'If the scale parameter is specified to be a function of covariates, the canonical log link function is used.
 #'@param formula An object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted.
 #'@param data An optional data frame, list or environment (or object coercible by as.data.frame to a data frame) containing the variables in the model. If not found in data, the variables are taken from environment(formula), typically the environment from which gamma_flexfit is called.
 #'@param weights An optional vector of weights to be used in the fitting process. Should be NULL or a numeric vector.
@@ -12,9 +13,9 @@
 #'@details This function uses the same parametrization of the Generalized Beta distribution of the Second Kind (GB2) as is used in Kleiber and Kotz (2003). Starting values for the maximum likelihood estimation procedure are obtained by maximizing the likelihood function of the GB2 with starting values p = 1 and q = 1, and the remaining starting values taken from the method of moments estimates of the parameters in the Fisk distribution. The probability probability density function is used is:
 #'@details f(y) = ay^{ap-1}/[b^{ap}Β(p,q)(1+(y/b)^{a})^{p+q}]
 #'@details When the argument formula specifies a full model with an intercept, b takes the following form and is estimated via a three step (maximum likelihood, least squares, maximum likelihood) procedure:
-#'@details b = β0 + β1x1 + …. + βkxk
+#'@details b = exp(β0 + β1x1 + …. + βkxk)
 #'@details When the formula argument specifies a model without an intercept, b takes the bellow form. Estimating a model without an intercept is not advised as the estimates are extremely unstable; in simulations and test with medical data, the maximum likelihood procedure often often did not converge. Users wanting to estimate a model without an intercept are advised to supply their own starting values. 
-#'@details b = β1x1 + …. + βkxk
+#'@details b = exp(β1x1 + …. + βkxk)
 #'@details When a null model is specified (formula = y ~ 0) b is not estimated as a function of covariates. The starting value for the maximum likelihood estimation procedure is obtained by calling the function weibull_scale.
 #'@references Kleiber, Christian, and Samuel Kotz. Statistical Size Distributions In Economics And Actuarial Sciences. John Wiley & Sons, 2003. Print.
 #'@export

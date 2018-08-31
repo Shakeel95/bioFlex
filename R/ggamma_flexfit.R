@@ -1,6 +1,7 @@
 #' Fitting Generalized Gamma distribution via maximum likelihood
 #'
 #'ggamma_flexfit is used to fit a Generalized Gamma distribution to a strictly positive response variable. The scale parameter may be specified either as a function of covariates or as a constant estimated using the response variable alone.
+#'If the scale parameter is specified to be a function of covariates, the canonical log link function is used.
 #'@param formula An object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted.
 #'@param data An optional data frame, list or environment (or object coercible by as.data.frame to a data frame) containing the variables in the model. If not found in data, the variables are taken from environment(formula), typically the environment from which ggamma_flexfit is called.
 #'@param weights An optional vector of weights to be used in the fitting process. Should be NULL or a numeric vector.
@@ -13,9 +14,9 @@
 #'@details f(y) = [α/Γ(φ)] • μ^{αφ} y^{αφ-1} exp(-(μy)^{α})
 #'@details μ is a scale parameter, while φ and α are shape parameters.
 #'@details When the argument formula specifies a full model with an intercept, μ takes the following form and is estimated via a two step (least squares and maximum likelihood) procedure:
-#'@details μ = β0 + β1x1 + …. + βkxk
+#'@details μ = exp(β0 + β1x1 + …. + βkxk)
 #'@details When the formula argument specifies a model without an intercept, μ takes the bellow form and is estimated via a two step (least squares and maximum likelihood) procedure. Unless theory suggests that an intercept should not be used, users are advised to use a model with an intercept as the maximum likelihood estimation procedure is more stable.
-#'@details μ = β1x1 + …. + βkxk
+#'@details μ = exp(β1x1 + …. + βkxk)
 #'@details When a null model is specified (formula = y ~ 0) μ is not estimated as a function of covariates. The starting value for the maximum likelihood estimation procedure is obtained by calling the function ggamma_alpha.
 #'@references Alberto Achcar, Jorge, Pedro Luiz Ramos, and Edson Zangiacomi Martinez. "Some Computational Aspects To Find Accurate Estimates For The Parameters Of The Generalized Gamma Distribution." Pesquisa Operacional Vol.37(2) (2017): n. pag. Print.
 #'@references 

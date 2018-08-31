@@ -27,6 +27,7 @@ ggamma_flexfit(formula, data = NULL, weights = NULL, subset = NULL,
 }
 \description{
 ggamma_flexfit is used to fit a Generalized Gamma distribution to a strictly positive response variable. The scale parameter may be specified either as a function of covariates or as a constant estimated using the response variable alone.
+If the scale parameter is specified to be a function of covariates, the canonical log link function is used.
 }
 \details{
 This function uses the same parametrization of the Fisk distribution as is used in Stacy (1962); note that this is differs significantly to the parametrization  used in many common R packages. Starting values for the maximum likelihood estimation procedure are obtained using the procedure set out in Achcar et al. (2017). The probability probability density function is used is:
@@ -37,11 +38,11 @@ f(y) = [α/Γ(φ)] • μ^{αφ} y^{αφ-1} exp(-(μy)^{α})
 
 When the argument formula specifies a full model with an intercept, μ takes the following form and is estimated via a two step (least squares and maximum likelihood) procedure:
 
-μ = β0 + β1x1 + …. + βkxk
+μ = exp(β0 + β1x1 + …. + βkxk)
 
 When the formula argument specifies a model without an intercept, μ takes the bellow form and is estimated via a two step (least squares and maximum likelihood) procedure. Unless theory suggests that an intercept should not be used, users are advised to use a model with an intercept as the maximum likelihood estimation procedure is more stable.
 
-μ = β1x1 + …. + βkxk
+μ = exp(β1x1 + …. + βkxk)
 
 When a null model is specified (formula = y ~ 0) μ is not estimated as a function of covariates. The starting value for the maximum likelihood estimation procedure is obtained by calling the function ggamma_alpha.
 }

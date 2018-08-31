@@ -1,6 +1,6 @@
 Package: bioFlex
 Type: Package
-Title: Estimation and model selection for strictly positive heavy tailed data, using flexible parametric models
+Title: Estimation and model selection for strictly positive heavy tailed data, using flexible parametric distributions
 Version: 0.1.0
 Author: Shakeel Gavioli-Akilagun
 Maintainer: Shakeel Gavioli-Akilagun <shakeel.gavioli@googlemail.com>

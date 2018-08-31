@@ -26,6 +26,7 @@ fisk_flexfit(formula, data = NULL, weights = NULL, subset = NULL,
 }
 \description{
 fisk_flexfit is used to fit a Fisk or Log-Logistic distribution to a strictly positive response variable. The scale parameter may be specified either as a function of covariates or as a constant estimated using the response variable alone.
+If the scale parameter is specified to be a function of covariates, the canonical log link function is used.
 }
 \details{
 This function uses the same parametrization of the Fisk distribution as is used in Kleiber and Kotz (2003). Starting values for the maximum likelihood estimation procedure are obtained by solving for the roots of a trigonometric equation equal to the ratio of the first and second moment. The probability probability density function is used is:
@@ -36,11 +37,11 @@ f(y) = αy^{α-1}/[β^{α}(1+(y/β)^{α}]^{2}
 
 When the argument formula specifies a full model with an intercept, α takes the following form and is estimated via a two step (least squares and maximum likelihood) procedure:
 
-α = β0 + β1x1 + …. + βkxk
+α = exp(β0 + β1x1 + …. + βkxk)
 
 When the formula argument specifies a model without an intercept, α takes the bellow form and is estimated via a two step (least squares and maximum likelihood) procedure. Unless theory suggests that an intercept should not be used, users are advised to use a model with an intercept as the maximum likelihood estimation procedure is more stable.
 
-α = β1x1 + …. + βkxk
+α = exp(β1x1 + …. + βkxk)
 
 When a null model is specified (formula = y ~ 0) α is not estimated as a function of covariates. The starting value for the maximum likelihood estimation procedure is obtained by calling the function fisk_scale.
 }

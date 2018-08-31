@@ -26,6 +26,7 @@ lnorm_flexfit(formula, data = NULL, weights = NULL, subset = NULL,
 }
 \description{
 lnorm_flexfit is used to fit a Log-Normal distribution to a strictly positive response variable. The parameter mu may be specified either as a function of covariates or as a constant estimated using the response variable alone.
+If mu is specified to be a function of covariates, the identity link function is used.
 }
 \details{
 This function uses the two parameter parametrization of the Log-Normal distribution.Starting values for the maximum likelihood estimation procedure are taken from Brenda Faith Ginos’ Masters dissertation on the Log-Normal distribution. The probability probability density function is used is:

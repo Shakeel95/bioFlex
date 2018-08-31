@@ -1,6 +1,7 @@
 #' Fitting Log-Normal distribution via maximum likelihood
 #'
 #'lnorm_flexfit is used to fit a Log-Normal distribution to a strictly positive response variable. The parameter mu may be specified either as a function of covariates or as a constant estimated using the response variable alone.
+#'If mu is specified to be a function of covariates, the identity link function is used.
 #'@param formula An object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted.
 #'@param data An optional data frame, list or environment (or object coercible by as.data.frame to a data frame) containing the variables in the model. If not found in data, the variables are taken from environment(formula), typically the environment from which lnorm_flexfit is called.
 #'@param weights An optional vector of weights to be used in the fitting process. Should be NULL or a numeric vector.
