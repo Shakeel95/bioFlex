@@ -1,3 +1,19 @@
+#' Conditional probability for Fisk distribution
+#' 
+#' fisk_flexprob returns the conditional probability P(Y<k | X) of a model fitted via the function fisk_flexfit; where α has been specified to be a function of covariates the required value should be specified using the ‘features’ parameter. The function includes a procedure for visualizing the conditional probability. fisk_flexprob also allows for the correlation of estimated parameters via the Cholesky decomposition of the variance-covariance matrix.
+#'@param K Value for which P(Y<k | X) is computed.
+#'@param model An object of class "mle2" produced using the function fisk_flexfit.
+#'@param features A numeric vector specifying the value of covriates at which the conditional probability should be evaluated; the covariates in the vector should appear in the same order as they do in the model. Where a model does not depend on covariates the argument may be left blank.
+#'@param visualise Logical. If TRUE (the default) the conditional distribution is plotted at P(Y<k | x) is shaded. 
+#'@param xlim Numeric vectors of length 2, giving the coordinate range of the dependent variable.
+#'@details This function uses the same parametrization of the Fisk distribution as is used in Kleiber and Kotz (2003). The probability probability density function is used is:
+#'@details f(y) = αy^α-1/[β^α(1+(y/β)^α]^2
+#'@details The function returns:
+#'@details P(Y>k | X) = [1+(k/α)^{-β}]^{-1}
+#'@details α may be a function of covariates; in which case, the cannonical log link function is used.
+#'@references Kleiber, Christian, and Samuel Kotz. Statistical Size Distributions In Economics And Actuarial Sciences. pp. 107-147. John Wiley & Sons, 2003.
+#'@export 
+
 fisk_flexprob <- function(K, model, features, visualise = TRUE, xlim = c(0,15), draws = 5) {
   
   mod <- as.data.frame(tidy(model))

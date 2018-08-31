@@ -1,4 +1,21 @@
-lomax_flexprob <- function(K, model, features, visualise = TRUE, xlim = c(0,15), draws = 5) {
+#' Conditional probability for Lomax distribution
+#' 
+#' lomax_flexprob returns the conditional probability P(Y<k | X) of a model fitted via the function lomax_flexfit; where λ has been specified to be a function of covariates the required value should be specified using the ‘features’ parameter. The function includes a procedure for visualizing the conditional probability. lomax_flexprob also allows for the correlation of estimated parameters via the Cholesky decomposition of the variance-covariance matrix.
+#'@param K Value for which P(Y<k | X) is computed.
+#'@param model An object of class "mle2" produced using the function lomax_flexfit.
+#'@param features A numeric vector specifying the value of covriates at which the conditional probability should be evaluated; the covariates in the vector should appear in the same order as they do in the model. Where a model does not depend on covariates the argument may be left blank.
+#'@param visualise Logical. If TRUE (the default) the conditional distribution is plotted at P(Y<k | x) is shaded. 
+#'@param xlim Numeric vectors of length 2, giving the coordinate range of the dependent variable.
+#'@param draws The number of random draws from multivariate random normal representing correlated parameters. If parameter correlation is not required draws should be set to zero.
+#'@details This function uses the same parametrization of the Lomax distribution as is used in Kleiber and Kotz (2003). The probability probability density function is used is:
+#'@details f(y) = (α/λ) [1 + (x/λ)]^-(α+1)
+#'@details The function returns:
+#'@details P(Y>k | X) = 1-[1+k/λ]^{-α}
+#'@details λ may be a function of covariates; in which case, the cannonical log link function is used.
+#'@references Kleiber, Christian, and Samuel Kotz. Statistical Size Distributions In Economics And Actuarial Sciences. pp. 107-147. John Wiley & Sons, 2003. Print.
+#'@export 
+
+lomax_flexprob <- function(K, model, features, visualise = TRUE, xlim, draws = 5) {
   
   mod <- as.data.frame(tidy(model))
   
@@ -24,9 +41,9 @@ lomax_flexprob <- function(K, model, features, visualise = TRUE, xlim = c(0,15),
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(plomax(K, scale = lambda, shape = alpha))
+      return(as.numeric(plomax(K, scale = lambda, shape = alpha)))
     } else {
-      return(plomax(K, scale = lambda, shape = alpha))
+      return(as.numeric(plomax(K, scale = lambda, shape = alpha)))
     }
     
     #=====================================#
@@ -50,9 +67,9 @@ lomax_flexprob <- function(K, model, features, visualise = TRUE, xlim = c(0,15),
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(plomax(K, scale = lambda, shape = alpha))
+      return(as.numeric(plomax(K, scale = lambda, shape = alpha)))
     } else {
-      return(plomax(K, scale = lambda, shape = alpha))
+      return(as.numeric(plomax(K, scale = lambda, shape = alpha)))
     }
     
     #====================================================================#
@@ -76,9 +93,9 @@ lomax_flexprob <- function(K, model, features, visualise = TRUE, xlim = c(0,15),
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(plomax(K, scale = lambda, shape = alpha))
+      return(as.numeric(plomax(K, scale = lambda, shape = alpha)))
     } else {
-      return(plomax(K, scale = lambda, shape = alpha))
+      return(as.numeric(plomax(K, scale = lambda, shape = alpha)))
     }
   }
 }
