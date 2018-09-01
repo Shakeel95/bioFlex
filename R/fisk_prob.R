@@ -6,6 +6,7 @@
 #'@param features A numeric vector specifying the value of covriates at which the conditional probability should be evaluated; the covariates in the vector should appear in the same order as they do in the model. Where a model does not depend on covariates the argument may be left blank.
 #'@param visualise Logical. If TRUE (the default) the conditional distribution is plotted at P(Y<k | x) is shaded. 
 #'@param xlim Numeric vectors of length 2, giving the coordinate range of the dependent variable.
+#'@param draws The number of random draws from multivariate random normal representing correlated parameters. If parameter correlation is not required draws should be set to zero.
 #'@details This function uses the same parametrization of the Fisk distribution as is used in Kleiber and Kotz (2003). The probability probability density function is used is:
 #'@details f(y) = αy^α-1/[β^α(1+(y/β)^α]^2
 #'@details The function returns:
@@ -40,9 +41,9 @@ fisk_flexprob <- function(K, model, features, visualise = TRUE, xlim = c(0,15), 
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(pllogis(K, scale = alpha, shape = beta))
+      return(as.numeric(pllogis(K, scale = alpha, shape = beta)))
     } else {
-      return(pllogis(K, scale = alpha, shape = beta))
+      return(as.numeric(pllogis(K, scale = alpha, shape = beta)))
     }
     
     #=====================================#
@@ -66,9 +67,9 @@ fisk_flexprob <- function(K, model, features, visualise = TRUE, xlim = c(0,15), 
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(pllogis(K, scale = alpha, shape = beta))
+      return(as.numeric(pllogis(K, scale = alpha, shape = beta)))
     } else {
-      return(pllogis(K, scale = alpha, shape = beta))
+      return(as.numeric(pllogis(K, scale = alpha, shape = beta)))
     }
     
     #====================================================================#
@@ -92,9 +93,9 @@ fisk_flexprob <- function(K, model, features, visualise = TRUE, xlim = c(0,15), 
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(pllogis(K, scale = alpha, shape = beta))
+      return(as.numeric(pllogis(K, scale = alpha, shape = beta)))
     } else {
-      return(pllogis(K, scale = alpha, shape = beta))
+      return(as.numeric(pllogis(K, scale = alpha, shape = beta)))
     }
   }
 }

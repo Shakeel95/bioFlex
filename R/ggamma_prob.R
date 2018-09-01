@@ -6,6 +6,7 @@
 #'@param features A numeric vector specifying the value of covriates at which the conditional probability should be evaluated; the covariates in the vector should appear in the same order as they do in the model. Where a model does not depend on covariates the argument may be left blank.
 #'@param visualise Logical. If TRUE (the default) the conditional distribution is plotted at P(Y<k | x) is shaded. 
 #'@param xlim Numeric vectors of length 2, giving the coordinate range of the dependent variable.
+#'@param draws The number of random draws from multivariate random normal representing correlated parameters. If parameter correlation is not required draws should be set to zero.
 #'@details This function uses the same parametrization of the Fisk distribution as is used in Stacy (1962); note that this is differs significantly to the parametrization used in many common R packages. The probability probability density function is used is:
 #'@details f(y) = [α/Γ(φ)] • μ^αφ y^αφ-1 exp(-(μy)^α)
 #'@details The function returns:

@@ -42,9 +42,9 @@ lnorm_flexprob <- function(K, model, features, visualise = TRUE, xlim, draws = 5
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(plnorm(K, meanlog = mu, sdlog = sigma))
+      return(as.numeric(plnorm(K, meanlog = mu, sdlog = sigma)))
     } else {
-      return(plnorm(K, meanlog = mu, sdlog = sigma))
+      return(as.numeric(plnorm(K, meanlog = mu, sdlog = sigma)))
     }
     
     #=====================================#
@@ -67,9 +67,9 @@ lnorm_flexprob <- function(K, model, features, visualise = TRUE, xlim, draws = 5
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(plnorm(K, meanlog = mu, sdlog = sigma))
+      return(as.numeric(plnorm(K, meanlog = mu, sdlog = sigma)))
     } else {
-      return(plnorm(K, meanlog = mu, sdlog = sigma))
+      return(as.numeric(plnorm(K, meanlog = mu, sdlog = sigma)))
     }
     
     #====================================================================#
@@ -93,10 +93,9 @@ lnorm_flexprob <- function(K, model, features, visualise = TRUE, xlim, draws = 5
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(plnorm(K, meanlog = mu, sdlog = sigma))
+      return(as.numeric(plnorm(K, meanlog = mu, sdlog = sigma)))
     } else {
-      return(plnorm(K, meanlog = mu, sdlog = sigma))
+      return(as.numeric(plnorm(K, meanlog = mu, sdlog = sigma)))
     }
-    
   }
 }

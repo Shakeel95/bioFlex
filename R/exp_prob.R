@@ -36,9 +36,9 @@ exp_flexprob <- function(K, model, features, visualise = TRUE, xlim, draws = 5) 
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(pexp(K, rate = lambda))
+      return(as.numeric(pexp(K, rate = lambda)))
     } else {
-      return(pexp(K, rate = lambda))
+      return(as.numeric(pexp(K, rate = lambda)))
     }
     
     #=====================================#
@@ -59,9 +59,9 @@ exp_flexprob <- function(K, model, features, visualise = TRUE, xlim, draws = 5) 
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(pexp(K, rate = lambda))
+      return(as.numeric(pexp(K, rate = lambda)))
     } else {
-      return(pexp(K, rate = lambda))
+      return(as.numeric(pexp(K, rate = lambda)))
     }
     
     #====================================================================#
@@ -80,9 +80,9 @@ exp_flexprob <- function(K, model, features, visualise = TRUE, xlim, draws = 5) 
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(pexp(K, rate = lambda))
+      return(as.numeric(pexp(K, rate = lambda)))
     } else {
-      return(pexp(K, rate = lambda))
+      return(as.numeric(pexp(K, rate = lambda)))
     }
   }
 }

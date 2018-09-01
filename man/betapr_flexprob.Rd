@@ -2,7 +2,7 @@
 % Please edit documentation in R/betapr_prob.R
 \name{betapr_flexprob}
 \alias{betapr_flexprob}
-\title{Conditional probability for Fisk distribution}
+\title{Conditional probability for Beta Prime distribution}
 \usage{
 betapr_flexprob(K, model, features, visualise = TRUE, draws = 5, xlim)
 }

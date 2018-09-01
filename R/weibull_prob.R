@@ -42,9 +42,9 @@ weibull_flexprob <- function(K, model, features, visualise = TRUE, xlim, draws =
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(pweibull(K, shape = kappa, scale = lambda))
+      return(as.numeric(pweibull(K, shape = kappa, scale = lambda)))
     } else {
-      return(pweibull(K, shape = kappa, scale = lambda))
+      return(as.numeric(pweibull(K, shape = kappa, scale = lambda)))
     }
     
     #=====================================#
@@ -68,9 +68,9 @@ weibull_flexprob <- function(K, model, features, visualise = TRUE, xlim, draws =
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(pweibull(K, shape = kappa, scale = lambda))
+      return(as.numeric(pweibull(K, shape = kappa, scale = lambda)))
     } else {
-      return(pweibull(K, shape = kappa, scale = lambda))
+      return(as.numeric(pweibull(K, shape = kappa, scale = lambda)))
     }
     
     #====================================================================#
@@ -94,9 +94,9 @@ weibull_flexprob <- function(K, model, features, visualise = TRUE, xlim, draws =
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(pweibull(K, shape = kappa, scale = lambda))
+      return(as.numeric(pweibull(K, shape = kappa, scale = lambda)))
     } else {
-      return(pweibull(K, shape = kappa, scale = lambda))
+      return(as.numeric(pweibull(K, shape = kappa, scale = lambda)))
     }
   }
 }

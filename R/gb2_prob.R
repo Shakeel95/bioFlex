@@ -1,4 +1,22 @@
-gb2_flexprob <- function(K, model, features, visualise = TRUE, xlim = c(0,15), draws = 5) {
+#' Conditional probability for Generalized Beta distribution of the Second Kind 
+#' 
+#' gb2_flexprob returns the conditional probability P(Y<k | X) of a model fitted via the function gb2_flexfit; where b has been specified to be a function of covariates the required value should be specified using the ‘features’ parameter. The function includes a procedure for visualizing the conditional probability. gb2_flexprob also allows for the correlation of estimated parameters via the Cholesky decomposition of the variance-covariance matrix.
+#'@param K Value for which P(Y<k | X) is computed.
+#'@param model An object of class "mle2" produced using the function gb2_flexfit.
+#'@param features A numeric vector specifying the value of covriates at which the conditional probability should be evaluated; the covariates in the vector should appear in the same order as they do in the model. Where a model does not depend on covariates the argument may be left blank.
+#'@param visualise Logical. If TRUE (the default) the conditional distribution is plotted at P(Y<k | x) is shaded. 
+#'@param xlim Numeric vectors of length 2, giving the coordinate range of the dependent variable.
+#'@param draws The number of random draws from multivariate random normal representing correlated parameters. If parameter correlation is not required draws should be set to zero.
+#'@details This function uses the same parametrization of the Generalized Beta Distribution of the Second Kind as is used in Kleiber and Kotz (2003). The probability probability density function is used is:
+#'@details f(y) = ay^ap-1/[b^apΒ(p,q)(1+(y/b)^a)^p+q]
+#'@details The function returns:
+#'@details P(Y>k | X) = [(k/b)^{a}/(1+(k/n)^{a})]^{p}/(pΒ(p,q))⋅2F1(p,1-q;p+1;[(k/b)^{a}/(1+(k/b)^{a})])
+#'@details b may be a function of covariates; in which case, the cannonical log link function is used.
+#'@references Kleiber, Christian, and Samuel Kotz. Statistical Size Distributions In Economics And Actuarial Sciences. pp. 107-147. John Wiley & Sons, 2003.
+#'@export
+
+
+gb2_flexprob <- function(K, model, features, visualise = TRUE, xlim, draws = 5) {
   
   mod <- as.data.frame(tidy(model))
   
@@ -28,9 +46,9 @@ gb2_flexprob <- function(K, model, features, visualise = TRUE, xlim = c(0,15), d
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(pgb2(K, scale = b, shape1 = a, shape2 = p, shape3 = q))
+      return(as.numeric(pgb2(K, scale = b, shape1 = a, shape2 = p, shape3 = q)))
     } else {
-      return(pgb2(K, scale = b, shape1 = a, shape2 = p, shape3 = q))
+      return(as.numeric(pgb2(K, scale = b, shape1 = a, shape2 = p, shape3 = q)))
     }
     
     #=====================================#
@@ -59,9 +77,9 @@ gb2_flexprob <- function(K, model, features, visualise = TRUE, xlim = c(0,15), d
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(pgb2(K, scale = b, shape1 = a, shape2 = p, shape3 = q))
+      return(as.numeric(pgb2(K, scale = b, shape1 = a, shape2 = p, shape3 = q)))
     } else {
-      return(pgb2(K, scale = b, shape1 = a, shape2 = p, shape3 = q))
+      return(as.numeric(pgb2(K, scale = b, shape1 = a, shape2 = p, shape3 = q)))
     }
     
     #====================================================================#
@@ -89,9 +107,9 @@ gb2_flexprob <- function(K, model, features, visualise = TRUE, xlim = c(0,15), d
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(pgb2(K, scale = b, shape1 = a, shape2 = p, shape3 = q))
+      return(as.numeric(pgb2(K, scale = b, shape1 = a, shape2 = p, shape3 = q)))
     } else {
-      return(pgb2(K, scale = b, shape1 = a, shape2 = p, shape3 = q))
+      return(as.numeric(pgb2(K, scale = b, shape1 = a, shape2 = p, shape3 = q)))
     }
   }
 }

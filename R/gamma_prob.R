@@ -42,9 +42,9 @@ gamma_flexprob <- function(K, model, features, visualise = TRUE, xlim, draws = 5
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(pgamma(K, shape = alpha, rate = lambda))
+      return(as.numeric(pgamma(K, shape = alpha, rate = lambda)))
     } else {
-      return(pgamma(K, shape = alpha, rate = lambda))
+      return(as.numeric(pgamma(K, shape = alpha, rate = lambda)))
     }
     
     #=====================================#
@@ -68,9 +68,9 @@ gamma_flexprob <- function(K, model, features, visualise = TRUE, xlim, draws = 5
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(pgamma(K, shape = alpha, rate = lambda))
+      return(as.numeric(pgamma(K, shape = alpha, rate = lambda)))
     } else {
-      return(pgamma(K, shape = alpha, rate = lambda))
+      return(as.numeric(pgamma(K, shape = alpha, rate = lambda)))
     }
     
     #====================================================================#
@@ -94,9 +94,9 @@ gamma_flexprob <- function(K, model, features, visualise = TRUE, xlim, draws = 5
       plot(preview, xlim = xlim, ylab = "Density", xlab = "", lwd = 3)
       Shade(preview, breaks = c(0,K), xlim = xlim)
       abline(a = 0, b = 0)
-      return(pgamma(K, shape = alpha, rate = lambda))
+      return(as.numeric(pgamma(K, shape = alpha, rate = lambda)))
     } else {
-      return(pgamma(K, shape = alpha, rate = lambda))
+      return(as.numeric(pgamma(K, shape = alpha, rate = lambda)))
     }
   }
 }
