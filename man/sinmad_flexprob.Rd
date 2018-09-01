@@ -22,6 +22,8 @@ is plotted at P(Y<k | x) is shaded.}
 
 \item{xlim}{Numeric vectors of length 2, giving the coordinate range of the
 dependent variable.}
+
+\item{draws}{The number of random draws from multivariate random normal representing correlated parameters. If parameter correlation is not required draws should be set to zero.}
 }
 \description{
 sinmad_flexprob returns the conditional probability P(Y<k | X) of a model

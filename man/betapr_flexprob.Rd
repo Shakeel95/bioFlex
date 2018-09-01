@@ -15,6 +15,8 @@ betapr_flexprob(K, model, features, visualise = TRUE, draws = 5, xlim)
 
 \item{visualise}{Logical. If TRUE (the default) the conditional distribution is plotted at P(Y<k | x) is shaded.}
 
+\item{draws}{The number of random draws from multivariate random normal representing correlated parameters. If parameter correlation is not required draws should be set to zero.}
+
 \item{xlim}{Numeric vectors of length 2, giving the coordinate range of the dependent variable.}
 }
 \description{

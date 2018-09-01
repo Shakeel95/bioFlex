@@ -17,6 +17,8 @@ fisk_flexprob(K, model, features, visualise = TRUE, xlim = c(0, 15),
 \item{visualise}{Logical. If TRUE (the default) the conditional distribution is plotted at P(Y<k | x) is shaded.}
 
 \item{xlim}{Numeric vectors of length 2, giving the coordinate range of the dependent variable.}
+
+\item{draws}{The number of random draws from multivariate random normal representing correlated parameters. If parameter correlation is not required draws should be set to zero.}
 }
 \description{
 fisk_flexprob returns the conditional probability P(Y<k | X) of a model fitted via the function fisk_flexfit; where α has been specified to be a function of covariates the required value should be specified using the ‘features’ parameter. The function includes a procedure for visualizing the conditional probability. fisk_flexprob also allows for the correlation of estimated parameters via the Cholesky decomposition of the variance-covariance matrix.
