@@ -2,6 +2,7 @@ Package: bioFlex
 Type: Package
 Title: Estimation and model selection for strictly positive heavy tailed data, using flexible parametric distributions
 Version: 0.1.0
+date: 2018
 Author: Ana Duarte, James Lomas, Shakeel Gavioli-Akilagun, Simon Hickinbotham
 Maintainer: Shakeel Gavioli-Akilagun <shakeel.gavioli@googlemail.com>
 Description: Maximum likelihood estimation of flexible parametric distributions nested by the Generalized Beta distribution of the Second Kind, model selection via various information criterations; 
