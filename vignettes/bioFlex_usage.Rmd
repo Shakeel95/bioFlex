@@ -1,0 +1,566 @@
+---
+title: "bioFlex usage"
+author: "Shakeel Gavioli-Akilagun"
+date: "2018-09-07"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{bioFlex usage}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+require(bioFlex, quietly = TRUE)
+require(scatterplot3d, quietly = TRUE)
+require(lattice, quietly = TRUE)
+```
+
+# Introduction to 'bioFlex'
+
+*The package **bioFlex** implements the framework developed in Jones et al. (2014) for the estimation of a variable’s full conditional distribution. **bioFlex** was developed to estimate data generating processes in Health Economics but can be used with any strictly positive response variable; the package uses eleven distributions nested by the Generalized Beta distribution of the Second Kind to capture higher level features such as conditional skewness and conditional kurtosis.The package’s main use is the estimation of the conditional distribution, however once this has been obtained **bioFlex** can be used to calculate useful features of the distribution such as* $E(Y|X)$ *and* $P(Y<k|X)$.  
+
+### Overview 
+
+In Health Economics, and related fields, contemporary research has focused on modelling the conditional mean $E(Y|X)$. Such modelling often misses important features of the full distribution such as conditional probabilities, and when modelling risks can result in an incomplete assessment of the risk if estimates of higher order moments are biased. 
+
+When a model with covariates is specified, the vector of covariates enters into the distribution by determining the value of the parameter which broadly controls the distribution’s scale. Parameters estimated by **bioFlex** therefore often lack the interpretability of similar parameters produced by a linear model. The issue is discussed further in section two of the vignette.  
+
+**bioFlex** selects the distribution best suited to the data by first estimating eleven candidate distributions and returning a list ranked by an information criterion selected by the user. The distributions estimated are listed below:
+
+* Generalized Beta of the Second Kind (four parameters)
+* Dagum (three parameters)
+* Singh-Maddala (three parameters)
+* Generalized Gamma (three parameters)
+* Beta Prime (two parameters)
+* Log-Normal (two parameters)
+* Gamma (two parameters)
+* Weibull (two parameters)
+* Lomax (two parameters)
+* Fisk (two parameters)
+* Exponential (one parameter)
+
+The choice of distributions was motivated by Nikolaidis (2016), and allows for a number of relationships between conditional skewness and conditional kurtosis, and by extension conditional tail probabilities at large, to be modelled. 
+
+
+### Usage 
+
+The package has four main uses: 
+
+1. Selecting the best fitting distribution using the `flex_select` function.
+2. Estimating a statistical model using the family of `_flexfit` functions.  
+3. Correlating uncorrelated variables in an estimated model. 
+4. Obtaining estimates of $E(Y|X)$ and $P(Y<k|X)$ using the `_flexpredict` and `_flexprob` functions respectively. 
+
+### Vignette structure 
+
+**Section one:** explains the basic model fitting and estimation functions by estimating data from an example dataset on diabetes. The topics covered are: 
+
+* Model selection
+* Model estimation
+* Parameter correlation 
+* Estimating conditional means
+* Estimating conditional probabilities
+
+**Section two:** explains how users can make use of more advanced functions in the package, making use of the same dataset. The topics covered are:
+
+* Maximum likelihood estimation in **bioFlex**
+* Choosing starting values 
+* Supplying arguments to `optim`
+
+**Section three:** explores how the package performs when supplied with simulated data. The topics covered are:
+
+* Simulation of Exponential random variables 
+* Simulation of Log-Normal random varaibles 
+* Simulation of Fisk random varaibles 
+
+
+# 1. Fitting models to real data with 'bioFlex' 
+
+In Dr John Schorling’s Diabetes dataset, glycosolated haemoglobin (`glyhb`) above 7.0 is taken as a positive diagnosis of diabetes. A researcher may be interested in estimating a statistical model for `glyhb`, given a vector of covariates, in order to identify patients at risk of developing diabetes. 
+
+In this example, the covariates considered are:  a dummy variable for the subject’s location     `Buckingham `, a dummy variable for the subject’s gender ` male `, height in inches ` height `,  weight in pounds `weight`, age `age`, waist size in inches `waist`, hip size in inches `hip`, and a series of dummy variables for the subjects build `small` and `large`.
+
+### Data 
+
+The `Diabetes` dataset consist of 17 variables on 373 subjects from 1046 subjects who were interviewed in a study to understand the prevalence of obesity, diabetes, and other cardiovascular risk factors in central Virginia for African Americans. 
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(Diabetes))
+```
+
+The response variable, `glyhb`,  is strictly positive with a heavy right tail, so modelling the data with a flexible parametric distribution is appropriate. It is good practice to take note of the skewness and the kurtosis, as these are good benchmarks for the estimated model. 
+
+```{r}
+# Load dataset 
+attach(Diabetes)
+# Calculate the skewness 
+Skew(glyhb)
+# Calculate the kurtosis 
+Kurt(glyhb)
+```
+
+```{r, echo = FALSE}
+plot(density(glyhb), lwd = 3, main = "Density Plot")
+hist(glyhb,  main = "Histogram", xlab = "Glycosolated Hemoglobin")
+```
+
+### Model selection 
+
+The `flex_select` function is used to rank functions in order of fit. Since we want to model glycosolated haemoglobin as a function of related variables the formula `glyhb ~ Buckingham + male + height + weight + age + small + large + waist + hip` is supplied to the function. `flex_select` works in a similar way to the `lm` function; the function looks for variables in the global environment, alternatively a dataset can be supplied via the `data` argument. 
+
+To drop the intercept from the model it is sufficient to add `-1` to the end of the formula. A model with no covariates can be estimated by specifying a blank model e.g. `glyhb ~ 0`. 
+
+By default distributions are ranked using the AIC, however any one of six information criteria criteria can be specified via the `IC` argument. Depending on the number of observations and the complexity of the model specified, model selection can be a lengthy process. `flex_select` displays a message every time the IC for a new model has been calculated. 
+
+```{r, fig.keep='none'}
+flex_select(glyhb ~ Buckingham + male + height + weight + age + small + large + waist + hip)
+```
+
+To help evaluate the distributional fit, for each distribution estimated `flex_select` produces a plot of the response variable’s histogram overlaid with the estimated distribution. If a model with covariates has been specified, these are evaluated at their means. 
+
+From the plots produced three distributions are clearly inadequate: the Lomax, the Exponential, and the Dagum. The remaining distributions seem to have similar distributional fits, and this is reinforced by the AIC ranking. Since the Singh-Maddala distribution is ranked highest we proceed by modelling the data generating process as such. 
+
+```{r, out.width = '30%', results= "hide", warning = FALSE, echo = FALSE}
+flex_select(glyhb ~ Buckingham + male + height + weight + age + small + large + waist + hip)
+```
+
+
+### Model estimation 
+
+The family of `_flexfit` functions are used to estimate each of the models ranked by the `flex_select` function.  By default, estimating a model produces a *key* providing a brief description of each parameter.
+
+```{r}
+sinmad_flexfit(glyhb ~ Buckingham + male + height + weight + age + small + large + waist + hip)
+```
+
+To perform further analysis with the estimated model, it is necessary to save it as an “mle2” object in the global environment. To estimate distribution features independent of other factors, an empty model is also estimated. Standard errors and p-values for the model can be obtained via the `summary` function. 
+
+```{r}
+# Estimate full model 
+m1 <- sinmad_flexfit(glyhb ~ Buckingham + male + height + weight + age + small + large + waist + hip, key = FALSE)
+# Estimate empty model 
+m0 <- sinmad_flexfit(glyhb ~ 0, key = FALSE)
+
+# Regression table for full model 
+summary(m1)
+```
+
+Many of the variables in the linear predictor are not statistically significant at the 5% confidence level. A more detailed analysis would estimate other highly ranked models or attempt a new ranking with fewer variables, however for simplicity the same model is used throughout.  
+
+### Parameter correlation 
+
+Probabilistic sensitivity analysis treats model parameters as independent, however estimated parameters are rarely uncorrelated. **bioFlex** uses Cholesky decomposition of the model’s variance-covariance matrix to correlate independent parameters; this is done by calling the `auto_cholesky` function. 
+
+```{r}
+auto_cholesky(m1)
+```
+
+The function performed by `auto_cholesky` is best understood by visualising the results. The plots below are both obtained using the `m0` model estimated above. The fist plot shows 500 draws from the parameter distribution implied by the regression table, while the second plot shows the same number of draws once `auto_cholesky` has been applied. 
+
+```{r, results= "hide", warning = FALSE, echo = FALSE}
+a <- c()
+b <- c()
+for (i in 1:500){
+  a <- c(a, rnorm(1,15.613927,1.499332))
+  b <- c(b, rnorm(1,4.119023,0.058875))
+}
+plot(a,b)
+
+lmod <- lm(b ~ a)
+abline(lmod, col = "red")
+
+a <- c()
+b <- c()
+for (i in 1:500){
+  ch <- auto_cholesky(m0)
+  a <- c(a, ch[1])
+  b <- c(b, ch[2])
+}
+plot(a,b)
+
+lmod <- lm(b ~ a)
+abline(lmod, col = "red")
+```
+
+As the Singh-Maddala is a three parameter distribution it is possible to show the joint correlation of all three parameters. The plot below shows 500 draws from the same implied distributions as discussed above. 
+
+```{r, results= "hide", warning = FALSE, echo = FALSE}
+a <- c()
+b <- c()
+q <- c()
+for (i in 1:500){
+  a <- c(a, rnorm(1,15.613927,1.499332))
+  b <- c(b, rnorm(1,4.119023,0.058875))
+  q <- c(q, rnorm(1, 0.232020, 0.029681))
+}
+s3d <- scatterplot3d(a,q,b)
+fit <- lm(b ~ a + q)
+s3d$plane3d(fit, col = "red")
+
+
+
+a <- c()
+b <- c()
+q <- c()
+for (i in 1:500){
+  ch <- auto_cholesky(m0)
+  a <- c(a, ch[1])
+  b <- c(b, ch[2])
+  q <- c(q, ch[3])
+}
+s3d <- scatterplot3d(a,q,b)
+fit <- lm(b ~ a + q)
+s3d$plane3d(fit, col = "red")
+
+```
+
+The `auto_cholesky` function is automatically called when estimating the conditional mean and conditional probability. By default the parameter used is the average of five draws from the multivariate random normal distribution implied by the Cholesky decomposition. This number can be adjusted via the `draws` parameter, while setting `draws = 0` disables Cholesky decomposition altogether. 
+
+### Conditional mean 
+
+Having estimated the most appropriate model, a researcher may be interested in estimating the conditional mean of a subject’s glycosolated haemoglobin level. The conditional mean is returned by the `_flexpredict` functions; in this case we use `sinmad_flexpredict`. 
+
+The function takes as arguments a `model`, the “mle2” object we estimated previously, and a numeric vector of `features` corresponding to the covariates in the model. It is important that these be supplied in the same order as the covariates appear in the model. For an empty model, such as `m0`, the `features` argument should be left blank. By default five draws from `auto_cholesky` are taken, however this can be changed via the `draws` parameter. 
+
+This example considers two hypothetical subjects, one *healthy* and one *unhealthy*, with the following features: 
+
+**Subject A: Mr Healthy**
+
+* Location: Louisa
+* Gender: Male 
+* Height: 70  
+* Weight: 120  
+* Age: 23 
+* Build: medium  
+* Waist: 30  
+* Hip: 40 
+
+```{r}
+# Create vector of features 
+healthy <- c(0,1,70,120,23,0,0,30,40)
+```
+
+**Subject B: Mr Unhealthy**
+
+* Location: Buckingham
+* Gender: Male 
+* Height: 60  
+* Weight: 250  
+* Age: 51 
+* Build: large   
+* Waist: 47  
+* Hip: 38 
+
+```{r}
+# Create vector of features 
+unhealthy <- c(1,1,60,250,51,0,1,47,38)
+```
+
+To estimate the conditional mean glycosolated haemoglobin levels for the two subjects, it is sufficient to supply the model `m1` and the vector of features to the `sinmad_flexpredict` function. Initially, we disable `auto_cholesky`. As expected, the predicted glycosolated haemoglobin levels for subject B are higher than those of subject A. 
+
+```{r}
+# Conditional mean for subject A 
+sinmad_flexpredict(model = m1, features = healthy, draws = 0)
+
+# Conditional mean for subject B 
+sinmad_flexpredict(model = m1, features = unhealthy, draws = 0)
+```
+
+Enabling `auto_cholesky` introduces uncertainty, hence the oputput of the function will change each time it is called. 
+
+```{r}
+# Conditional mean for subject A 
+sinmad_flexpredict(model = m1, features = healthy, draws = 100)
+
+# Conditional mean for subject B 
+sinmad_flexpredict(model = m1, features = unhealthy, draws = 100)
+```
+
+### Conditional probabilities
+
+To decide whether a subject is at risk of developing diabetes, a researcher may want to estate the probability that the subjects glycosolated haemoglobin levels exceed the diagnostic threshold of 7, conditional upon the subjects features. This may be done by calling the `_flexprob` family of functions. Here, we use `sinmad_flexprob`. 
+
+`sinmad_flexprob` is very similar to `sinmad_flex_predict`. The function differs in that a threshold `K` must be specified in order for the function to return $P(Y<k|X)$. By default, the `_flexprob` functions plot the entire conditional distribution and shades the area to the left of the threshold; the feature can be disabled by setting `visualise = FALSE`. When the feature is enabled, it is necessary to specify `xlim`; a good choice is the range of the dependant variable.
+
+To estimate the conditional probability for the two subjects, it is sufficient to supply the model `m1` and the vector of features the `sinmad_flexprob` function and set `K=7`. Initially, we disable `auto_cholesky`.
+
+```{r, fig.keep = 'none'}
+sinmad_flexprob(K = 7, model = m1, features = healthy, xlim = range(glyhb), draws = 0)
+
+sinmad_flexprob(K = 7, model = m1, features = unhealthy, xlim = range(glyhb), draws = 0)
+```
+
+The plot for the healthy subject is on the left, and the plot for the unhealthy subject is on the right. 
+
+```{r, results= "hide", warning = FALSE, echo = FALSE}
+sinmad_flexprob(K = 7, model = m1, features = healthy, xlim = range(glyhb), draws = 0)
+
+sinmad_flexprob(K = 7, model = m1, features = unhealthy, xlim = range(glyhb), draws = 0)
+```
+
+As expected, the unhealthy subject faces a greater risk of developing diabetes. Enabling auto_cholesky introduces uncertainty, hence the oputput of the function will change each time it is called.
+
+```{r, fig.keep = 'none'}
+sinmad_flexprob(K = 7, model = m1, features = healthy, xlim = range(glyhb), draws = 100)
+
+sinmad_flexprob(K = 7, model = m1, features = unhealthy, xlim = range(glyhb), draws = 100)
+```
+
+Again the plot for the healthy subject is on the left, and the plot for the unhealthy subject is on the right. 
+
+```{r, results= "hide", warning = FALSE, echo = FALSE}
+sinmad_flexprob(K = 7, model = m1, features = healthy, xlim = range(glyhb), draws = 100)
+
+sinmad_flexprob(K = 7, model = m1, features = unhealthy, xlim = range(glyhb), draws = 100)
+```
+
+
+# 2. Customising the 'bioFlex' estimation procedure 
+
+**bioFlex** estimates models via full information maximum likelihood. While the maximum likelihood estimation procedure is fully automated, advanced users with knowledge of the likely values of some parameters may want to customise the estimation procedure. 
+
+### Maximum likelihood estimation in **bioFlex**
+
+Before customising the estimation procedure, it is useful to understand how **bioFlex** uses flexible parametric distributions and how it obtains first stage estimates. Each distribution implies observations are independent draws with conditional density functions $y_i \sim_{i.i.d} f(y_i| x_i , \theta)$, where $\theta$ is a vector of parameters and $x_i$ is a vector of covaraiates. The vector of covariates enters into the distribution by determining the value of the parameter which broadly controls the distribution’s scale. Typically, the log link function is used. For example, gievn a Gamma distribution: 
+
+$f(y_i|x_i,\alpha,\lambda) = \frac{\lambda^\alpha}{\Gamma(\alpha)}y_i^{\alpha-1}exp(-\lambda y_i)$
+
+$\alpha(x_i) = exp(x_i'\beta) = exp(\beta_0 + \beta_1x_{1,i} + ...)$
+
+Parameter estimates are found by obtaining the minimum of $l(\theta) = -log\left ( \prod _{i=1}^N f(y_i|x_i, \theta)\right )$ via a gradient descent algorithm. As illustrated by graphical representations of two of the  likelihood functions, convergence of the gradient descent algorithm is highly dependant on good starting values.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+lik <- function(lambda, alpha){
+  LL <- 0
+  for (i in 1:length(glyhb)){
+    LL <- LL + dgamma(glyhb[i], rate = lambda, shape = alpha, log = TRUE)
+  }
+  return(LL)
+}
+
+alpha <- seq(from = 0, to = 10, by = 0.5)
+lambda <- seq(from = 0, to = 5, by = 0.25)
+likelihood <- outer(lambda, alpha, lik)
+wireframe(likelihood, xlab = "lambda", ylab = "alpha", zlab = "LL", drape = TRUE, col.regions=rainbow(500), main = "Gamma")
+
+
+
+lik <- function(alpha, beta) {
+  LL <- 0 
+  for (i in 1:length(glyhb)){
+    LL <- LL + dbetapr(glyhb[i], shape1 = alpha, shape2 = beta, log = TRUE)
+  }
+  return(LL)
+}
+
+alpha <- seq(from = 0, to = 10, by = 1)
+beta <- seq(from = 0, to = 10, by = 1)
+likelihood <- outer(alpha, beta, lik)
+wireframe(likelihood, xlab = "alpha", ylab = "beta", zlab = "LL", drape = TRUE, col.regions=rainbow(500), main = "Beta Prime")
+```
+
+To ensure starting values are close to the global maximum, values are obtained by finding the method of moments estimates for distribution parameters: equations relating population moments to parameters are derived, and parameter estimates are obtained by solving the resulting system of equations while replacing population moments with sample. For example, gievn a Gamma distribution:
+
+$E(y_i|x_i) = \frac{\alpha}{\lambda}$ and $V(y_i|x_i) = \frac{\alpha}{\lambda^2}$. 
+
+Therefore:  $\widehat{\lambda }_{MM} = \frac{\overline{y}}{\widehat{\sigma }^2_{y}}$ and $\widehat{\alpha  }_{MM} = \frac{\overline{y}^2}{\widehat{\sigma }^2_{y}}$. 
+
+When $\alpha(x_i) = exp(x_i'\beta)$, starting values for $\beta$ are obtained by finding the OLS  coefficients of $log(\widehat{\lambda}_{MM}\cdot y_i)= \beta _0 + \beta_1 x_{1,i} + ... + \beta_k x_{k,i} + \varepsilon_i$. 
+
+### Choosing starting values 
+
+Users may supply individual model estimation functions `_flexfit` with an ordered list of their own starting values via the `ownstart` parameter. It is crucial that the list contains all parameters specified in the model, and that the list be in the order specified in the `help` for the distribution chosen. 
+
+Where users have knowledge of the likely values of a subset of parameters, a good strategy is to estimate the model once without specifying starting values and to use estimated coefficients as starting values in the case where the user does not want to specify their own. Alternatively, the following functions are called by **bioFlex** when choosing initial values, and may therefore be of use to users choosing their own: 
+
+* `betapr_shape1`
+* `betapr_shape2`
+* `exp_rate`
+* `fisk_scale`
+* `fisk_shape`
+* `gamma_rate` 
+* `gamma_shape`
+* `ggamma_alpha`
+* `ggamma_mu`
+* `ggamma_phi`
+* `lnorm_mean`
+* `lnorm_var`
+* `lomax_shape`
+* `lomax_scale`
+* `weibull_shape`
+* `weibull_scale`
+
+For example, consider the following simulated data for a gamma distribution in which the shape parameter depends on a covariate. 
+
+```{r}
+# Simulate data 
+N <- 500
+x <- runif(N, min = 0, max = 3)
+y <- rgamma(N, shape = exp(1.1 + 0.5*x), rate = 5)
+```
+
+The `flex_select` function confirms that the best fitting distribution is indeed a Gamma distribution. 
+
+```{r, fig.keep = 'none'}
+flex_select(y~x)
+```
+
+A researches may have prior knowledge indicating that the rate parameter is around 5, but may have no prior knowledge of the effect of the covariate on the scale parameter. In which case, a good strategy would be to estimate the model once without starting values, and to save to estimated parameters around which there is uncertainty. 
+
+```{r}
+gamma_flexfit(y~x)
+```
+
+A full list of starting values can then be constructed, and supplied to `gamma_flexfit`. 
+
+```{r}
+# Define list of starting values 
+custom_list <- list(lambda = 5, Intercept = 1.0717115, beta1 = 0.4952404)
+
+# Estimate distribution
+gamma_flexfit(y~x, ownstart = custom_list)
+```
+
+### Supplying arguments to optim
+
+The family of `_flexfit` functions call the `mle2` function in the **bbmle** package, which in turn relies on the `optim` function. The default optimisation algorithm is used by `mle2`, and by extension by `_flexfit` functions. Advanced users supply arguments directly to `optim` via `…`. 
+
+# 3. Fitting models to simulated data with 'bioFlex' 
+
+### Exponential distribution 
+
+Below 50 simulations are performed in which the dependent variable is exponentially distributed and the rate parameter depends on a single covariate. 
+
+```{r, fig.align='center'}
+# Random number process
+set.seed(1001)
+N <- 100 
+
+# Define vectors to reccord parameter estimates 
+beta0_est <- c()
+beta1_est <- c()
+
+for (i in 1:50) {
+  
+  # Simulate data
+  x <- runif(N, min = -1, max = 3)
+  y <- rexp(N, rate = exp(1.3 + 0.2*x))
+  
+  #Estimate model and save estimated parameters
+  m <- exp_flexfit(y~x, key = FALSE)
+  beta0_est <- c(beta0_est, auto_cholesky(m, draws = 0 )[1])
+  beta1_est <- c(beta1_est, auto_cholesky(m, draws = 0 )[2])
+
+  # Plot denisty of random draws 
+  if (i == 1) {
+    plot(density(y), col = i, "Exponential distributions")
+  } else 
+    lines(density(y), col = i)
+}
+```
+
+The mean of the estimated coeficients across 50 models are close to the true values specified above.
+
+```{r, echo = FALSE}
+results <- data.frame(cbind(c(mean(beta0_est), mean(beta1_est)), c(sd(beta0_est), sd(beta1_est))))
+
+names(results) <- c("mean","sd")
+row.names(results) <-c("Beta 0", "Beta 1")
+
+results
+```
+
+### Log-Normal distribution 
+
+Below 50 simulations are performed in which the dependent variable is Log-Normal distributed and $\mu$ depends on a single covariate.
+
+```{r, fig.align='center'}
+# Random number process
+set.seed(1001)
+N <- 100 
+
+# Define vectors to reccord parameter estimates 
+beta0_est <- c()
+beta1_est <- c()
+sigma_est <- c()
+
+for (i in 1:50) {
+  
+  # Simulate data
+  x <- runif(N, min = -1, max = 3)
+  y <- rlnorm(N, meanlog = 5 + 2*x, sdlog = (0.25))
+
+  #Estimate model and save estimated parameters
+  m <- lnorm_flexfit(y~x, key = FALSE)
+  beta0_est <- c(beta0_est, auto_cholesky(m, draws = 0)[2])
+  beta1_est <- c(beta1_est, auto_cholesky(m, draws = 0)[3])
+  sigma_est <- c(sigma_est, auto_cholesky(m, draws = 0)[1])
+
+  # Plot denisty of random draws 
+  if (i == 1) {
+    plot(density(y), col = i, "Log-Normal distributions")
+  } else 
+    lines(density(y), col = i)
+}
+```
+
+The mean of the estimated coeficients across 50 models are close to the true values specified above. The standard deviations are also small.
+
+```{r, echo = FALSE}
+results <- data.frame(cbind(c(mean(beta0_est), mean(beta1_est), mean(sigma_est)), c(sd(beta0_est), sd(beta0_est), sd(sigma_est))))
+
+names(results) <- c("mean","sd")
+row.names(results) <-c("Beta 0", "Beta 1", "Sigma")
+
+results
+```
+
+### Fisk distribution 
+
+Below 50 simulations are performed in which the dependent variable is Weibull distributed and the shape parameter depends on a single covariate.
+
+```{r, fig.align='center'}
+# Random number process
+set.seed(1001)
+N <- 100 
+
+# Define vectors to reccord parameter estimates 
+beta0_est <-c()
+beta1_est <- c()
+shape_est <- c()
+
+for (i in 1:50){
+  
+  # Simulate data 
+  x <- runif(N, min = 0, max = 3)
+  y <- rllogis(N, shape = 2, scale = exp(1.3 + 0.25*x))
+  
+  # Estimate model and save estimated parameters
+  m <- fisk_flexfit(y~x, key = FALSE)
+  beta0_est <-c(beta0_est, auto_cholesky(m, draws = 0)[2])
+  beta1_est <- c(beta1_est, auto_cholesky(m, draws = 0)[3])
+  shape_est <- c(shape_est, auto_cholesky(m, draws = 0)[1])
+  
+  # Plot denisty of random draws 
+  if (i == 1) {
+    plot(density(y), col = i, "Fisk distributions")
+  } else 
+    lines(density(y), col = i)
+}
+```
+
+The means of the estimated parameters are close to the true parameter values, however the standard deviations are large; in particular for the slope coefficient.  
+
+```{r, echo = FALSE}
+results <- data.frame(cbind(c(mean(beta0_est), mean(beta1_est), mean(shape_est)), c(sd(beta0_est), sd(beta0_est), sd(shape_est))))
+
+names(results) <- c("mean","sd")
+row.names(results) <-c("Beta 0", "Beta 1", "Scale")
+
+results
+```
